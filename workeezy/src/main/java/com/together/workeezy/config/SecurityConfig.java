@@ -87,7 +87,6 @@ public class SecurityConfig {
 
                         // 챗봇
                         .requestMatchers("/api/chat/**").permitAll()
-                        .anyRequest().authenticated()
 
                         // error
                         .requestMatchers("/error").permitAll()

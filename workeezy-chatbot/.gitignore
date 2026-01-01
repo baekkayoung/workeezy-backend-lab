@@ -41,3 +41,5 @@ docker-data/
 # cache
 .cache/
 coverage/
+
+venv/*
