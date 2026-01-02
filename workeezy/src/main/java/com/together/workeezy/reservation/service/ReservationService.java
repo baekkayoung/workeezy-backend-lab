@@ -45,11 +45,24 @@ public class ReservationService {
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRepository;
     private final PlaceRepository placeRepository;
-//    private final DraftRedisService draftRedisService;
     private final DraftApplicationService draftApplicationService;
 
-    // 동시 요청 방지를 위해 synchronized 추가 (멀티유저 환경 대비)
+    @Transactional
     public  Reservation createNewReservation(ReservationCreateDto dto, String email) {
+        LocalDateTime startDate = normalizeCheckIn(dto.getStartDate());
+        LocalDateTime endDate = normalizeCheckOut(dto.getStartDate());
+
+        // 락 걸고 조회
+        List<Reservation> conflicts =
+                reservationRepository.findConflictingReservationsForUpdate(
+                        dto.getRoomId(),
+                        startDate,
+                        endDate
+                );
+
+        if (!conflicts.isEmpty()) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
+        }
 
         // *** 예약 번호 생성 ***
         // 오늘 날짜 문자열 (예: 20251209)
@@ -68,6 +81,8 @@ public class ReservationService {
                 newSeq = Long.parseLong(parts[1]) + 1;
             }
         }
+
+
         // 새로운 예약번호 생성 (예: 20251209-000000009)
         String newReservationNo = String.format("%s-%09d", today, newSeq);
 
@@ -82,17 +97,6 @@ public class ReservationService {
         Room room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 룸이 존재하지 않습니다. roomId=" + dto.getRoomId()));
 
-        LocalDateTime startDate = normalizeCheckIn(dto.getStartDate());
-        LocalDateTime endDate = normalizeCheckOut(dto.getStartDate());
-
-        // 예약 중복 방지
-        // 신규
-        boolean available = isRoomAvailable(room.getId(),startDate);
-
-        // 수정
-        if (!available) {
-            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
-        }
 
         Place office = null;
         if (dto.getOfficeId() != null) {
@@ -107,8 +111,6 @@ public class ReservationService {
                 program,
                 room,
                 office,
-//                dto.getStartDate(),
-//                dto.getEndDate(),
                 startDate,
                 endDate,
                 dto.getPeopleCount(),
@@ -354,7 +356,6 @@ public class ReservationService {
                 dto.getPeopleCount(),
                 room
         );
-
     }
 
     // 예약 취소
@@ -363,21 +364,8 @@ public class ReservationService {
 
         Reservation reservation = getMyReservationOrThrow(id, email);
 
-        reservation.cancel();
-
-        // 이전
-//        int diffDays =  reservation.daysUntilStart();
-//
-//        if (!reservation.getStatus().canDirectCancel(diffDays)) {
-//            throw new IllegalStateException("이 상태에서는 취소 불가");
-//        }
-//        if (diffDays < 0) {
-//            throw new IllegalStateException("이미 시작된 예약은 취소 불가");
-//        }
-//
-//        reservation.setStatus(ReservationStatus.cancelled);
+        reservation.cancelByUser();
     }
-
 
     // ============================================================================
 

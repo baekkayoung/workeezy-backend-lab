@@ -1,18 +1,19 @@
 package com.together.workeezy.payment.entity;
 
 import com.together.workeezy.common.exception.CustomException;
-import com.together.workeezy.common.exception.ErrorCode;
 import com.together.workeezy.payment.enums.PaymentMethod;
 import com.together.workeezy.payment.enums.PaymentStatus;
 import com.together.workeezy.reservation.domain.Reservation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+
+import static com.together.workeezy.common.exception.ErrorCode.*;
 
 @Getter
 @Entity
@@ -27,6 +28,9 @@ public class Payment {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
+
+    @OneToOne(mappedBy = "payment", cascade = CascadeType.PERSIST)
+    private Refund refund;
 
     @Size(max = 100)
     @Column(name = "order_id", length = 100)
@@ -87,7 +91,7 @@ public class Payment {
             OffsetDateTime approvedAt) {
 
         if (this.status == PaymentStatus.paid) {
-            throw new CustomException(ErrorCode.PAYMENT_ALREADY_COMPLETED);
+            throw new CustomException(PAYMENT_ALREADY_COMPLETED);
         }
 
         this.orderId = orderId;
@@ -96,5 +100,21 @@ public class Payment {
         this.method = (method == null ? PaymentMethod.unknown : method);
         this.approvedAt = approvedAt.toLocalDateTime();
         this.status = PaymentStatus.paid;
+    }
+
+    // 결제 상태 변경 - cancelled
+    public void cancel() {
+        if (this.status != PaymentStatus.paid) {
+            throw new CustomException(PAYMENT_NOT_REFUNDABLE);
+        }
+        this.status = PaymentStatus.cancelled;
+    }
+
+    // payment - refund 연결
+    public void addRefund(Refund refund) {
+        if (this.refund != null) {
+            throw new CustomException(REFUND_ALREADY_EXISTS);
+        }
+        this.refund = refund;
     }
 }

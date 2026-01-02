@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.together.workeezy.common.exception.ErrorCode.*;
 import static jakarta.persistence.FetchType.LAZY;
 
 
@@ -59,6 +60,9 @@ public class Reservation {
     @JoinColumn(name = "office_id")
     private Place office;
 
+    @OneToOne(mappedBy = "reservation", fetch = LAZY, cascade = CascadeType.PERSIST)
+    private Payment payment;
+
     @NotNull
     @Column(name = "reservation_no", nullable = false, length = 20)
     private String reservationNo;
@@ -95,11 +99,8 @@ public class Reservation {
     @Column(name = "people_count", nullable = false)
     private int peopleCount;
 
-    @Column(name="confirm_pdf_key")
+    @Column(name = "confirm_pdf_key")
     private String confirmPdfKey;
-
-    @OneToOne(mappedBy = "reservation",  fetch = LAZY, cascade = CascadeType.PERSIST)
-    private Payment payment;
 
     @OneToMany(mappedBy = "reservation")
     private List<ReservationModify> reservationModifys = new ArrayList<>();
@@ -127,8 +128,8 @@ public class Reservation {
     }
 
     // 수정 요청 가능 상태 검증
-    public void validateRequestResubmit(){
-        if(!this.status.canRequestResubmit()){
+    public void validateRequestResubmit() {
+        if (!this.status.canRequestResubmit()) {
             throw new IllegalStateException("반려된 예약만 재신청이 가능합니다.");
         }
     }
@@ -142,7 +143,7 @@ public class Reservation {
     }
 
     // 수정 - 날짜 (상태검증, 날짜 검증까지)
-    public void changePeriod(LocalDateTime start, LocalDateTime  end) {
+    public void changePeriod(LocalDateTime start, LocalDateTime end) {
         validateUpdatable(); // 수정 가능한 상태인지
         validateDate(start, end); // 시작일 > 종료일 규칙
         this.startDate = start;
@@ -168,7 +169,6 @@ public class Reservation {
     }
 
     // ================================ 예약 CRUD ========================= //
-
 
 
     // ***** 예약 생성 *****
@@ -208,7 +208,7 @@ public class Reservation {
             LocalDateTime endDate,
             int peopleCount,
             Room room
-    ){
+    ) {
         validateUpdatable(); // 수정 가능한지
         validateDate(startDate, endDate); // 날짜 규칙
 
@@ -222,49 +222,77 @@ public class Reservation {
     }
 
     // 예약 재신청
-     public void resubmit(LocalDateTime startDate,
-                          LocalDateTime endDate,
-                          int peopleCount,
-                          Room room){
+    public void resubmit(LocalDateTime startDate,
+                         LocalDateTime endDate,
+                         int peopleCount,
+                         Room room) {
         validateRequestResubmit();
         validateDate(startDate, endDate);
 
-         this.startDate = startDate;
-         this.endDate = endDate;
-         this.peopleCount = peopleCount;
-         this.room = room;
-         this.stay = room.getPlace();
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.peopleCount = peopleCount;
+        this.room = room;
+        this.stay = room.getPlace();
 
-         recalculateTotalPrice();
+        recalculateTotalPrice();
 
-         this.status = ReservationStatus.waiting_payment;
-     }
-
-     // todo: 추후 업데이트 공통 메서드로 추출
-
-    // ***** 예약 취소 *****
-    public void cancel() {
-        // 남은 날짜
-        int diffDays = daysUntilStart();
-        status.validateCancelable(diffDays); // 취소 가능한 상태인지 검증
-        this.status = ReservationStatus.cancelled; // 취소 가능하면 바꿈
+        this.status = ReservationStatus.waiting_payment;
     }
 
+    // todo: 추후 업데이트 공통 메서드로 추출
 
+    // ***** 예약 취소 *****
+    public boolean cancelByUser() {
+        int diffDays = daysUntilStart();
 
-    // 결제 상태 변경
+        // 즉시 취소(예약 3일전)
+        if (status.canCancelImmediately(diffDays)) {
+            this.status = ReservationStatus.cancelled;
+            return true;
+        }
+
+        // 취소 요청(예약2일전~당일)
+        if (status.canRequestCancel(diffDays)) {
+            this.status = ReservationStatus.cancel_requested;
+            return false;
+        }
+
+        throw new CustomException(RESERVATION_CANCEL_NOT_ALLOWED);
+    }
+
+    // 결제 - 예약 연결
+    public void linkPayment(Payment payment) {
+        if (this.payment == null) {
+            this.payment = payment;
+        }
+    }
+
+    // ***** 예약 규칙 *****
+    public void assertPayable() {
+        if (!isPayable()) {
+            throw new CustomException(PAYMENT_NOT_ALLOWED);
+        }
+    }
+
+    public void assertOrderId(String orderId) {
+        if (!reservationNo.equals(orderId)) {
+            throw new CustomException(ORDER_ID_MISMATCH);
+        }
+    }
+
+    public void assertTotalAmount(Long amount) {
+        if (!totalPrice.equals(amount)) {
+            throw new CustomException(PAYMENT_AMOUNT_MISMATCH);
+        }
+    }
+
     public void markConfirmed() {
 
         if (status == ReservationStatus.confirmed)
             throw new CustomException(ErrorCode.PAYMENT_ALREADY_COMPLETED);
 
         status = ReservationStatus.confirmed;
-    }
-
-    public void linkPayment(Payment payment) {
-        if (this.payment == null) {
-            this.payment = payment;
-        }
     }
 
     // 관리자 승인 후에만 결제 가능
@@ -327,6 +355,5 @@ public class Reservation {
     public void updateConfirmPdfKey(String key) {
         this.confirmPdfKey = key;
     }
-
 
 }

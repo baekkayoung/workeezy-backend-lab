@@ -14,25 +14,16 @@ public enum ReservationStatus {
         return this == waiting_payment;
     }
 
-    // 직접 취소 가능 여부
-    public boolean canDirectCancel(int diffDays){
-        if(this == waiting_payment) return true;
-        if(this == approved) return true;
-        if(this == confirmed && diffDays >= 3)return true;
-        return false;
+    // 즉시 취소 가능 여부(상태 변경 X)
+    public boolean canCancelImmediately(int diffDays) {
+        if (this == waiting_payment) return true;
+        if (this == approved) return true;
+        return this == confirmed && diffDays >= 3;
     }
 
-    // 취소 요청 가능 여부
-    public boolean canRequestCancel(int diffDays){
-        if(this == confirmed &&diffDays >=1 && diffDays <3) return true;
-        return false;
-    }
-
-    // 취소 가능 날짜
-    public void validateCancelable(int diffDays) {
-        if (!canDirectCancel(diffDays)) {
-            throw new IllegalStateException("취소할 수 없습니다.");
-        }
+    // 취소 요청 가능 (관리자 승인 필요)(상태 변경 X)
+    public boolean canRequestCancel(int diffDays) {
+        return this == confirmed && diffDays >= 1 && diffDays < 3;
     }
 
     // 예약 변경 요청 가능 여부

@@ -3,32 +3,34 @@ package com.together.workeezy.payment.dto.response;
 import com.together.workeezy.payment.entity.Payment;
 import com.together.workeezy.payment.enums.PaymentMethod;
 import com.together.workeezy.reservation.domain.Reservation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PaymentConfirmResponse {
 
-    private Long paymentId;
-    private String paymentKey;
-    private String orderId;
-    private Long amount;
-    private PaymentMethod method;
-    private LocalDateTime approvedAt;
-    private String reservationNo;
+    private final Long paymentId;
+    private final String paymentKey;
+    private final String orderId;
+    private final Long amount;
+    private final PaymentMethod method;
+    private final LocalDateTime approvedAt;
+    private final String reservationNo;
 
     public static PaymentConfirmResponse of(Payment payment, Reservation reservation) {
-        PaymentConfirmResponse res = new PaymentConfirmResponse();
-        res.setPaymentId(payment.getId());
-        res.paymentKey = payment.getPaymentKey();
-        res.orderId = payment.getOrderId();
-        res.amount = payment.getAmount();
-        res.method = payment.getMethod();
-        res.approvedAt = payment.getApprovedAt();
-        res.reservationNo = reservation.getReservationNo();
-        return res;
+        return new PaymentConfirmResponse(
+                payment.getId(),
+                payment.getPaymentKey(),
+                payment.getOrderId(),
+                payment.getAmount(),
+                payment.getMethod(),
+                payment.getApprovedAt(),
+                reservation.getReservationNo()
+        );
     }
 }

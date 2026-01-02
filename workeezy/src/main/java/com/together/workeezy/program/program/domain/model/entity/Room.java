@@ -1,11 +1,14 @@
 package com.together.workeezy.program.program.domain.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Entity
 @Table(name = "tb_room")
+//@NoArgsConstructor(access = AccessLevel.PROTECTED) 테스트 코드용
+//@AllArgsConstructor(access = AccessLevel.PRIVATE)
+//@Builder
 public class Room {
 
     @Id

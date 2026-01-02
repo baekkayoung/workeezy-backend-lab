@@ -3,11 +3,14 @@ package com.together.workeezy.program.program.domain.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Entity
 @Table(name = "tb_place")
+//@Builder 테스트 코드 용
+//@NoArgsConstructor(access = AccessLevel.PROTECTED) // 테용
+//@AllArgsConstructor 테용
 public class Place {
 
     @Id

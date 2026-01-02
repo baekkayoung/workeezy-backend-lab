@@ -1,16 +1,20 @@
 package com.together.workeezy.payment.client;
 
 import com.together.workeezy.payment.config.TossPaymentProperties;
+import com.together.workeezy.payment.dto.response.TossCancelResponse;
 import com.together.workeezy.payment.dto.response.TossConfirmResponse;
+import com.together.workeezy.payment.entity.Payment;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Base64;
 import java.util.Map;
 
-@Service
+@Slf4j
+@Component
 @RequiredArgsConstructor
 public class TossPaymentClient {
 
@@ -21,26 +25,49 @@ public class TossPaymentClient {
                                        String orderId,
                                        long amount) {
 
-        // 1. Basic Auth 헤더 만들기 (secretKey:)
-        // 2. body: paymentKey, orderId, amount
+        // Basic Auth 헤더 만들기 (secretKey:)
+        // body: paymentKey, orderId, amount
         Map<String, Object> body = Map.of(
                 "paymentKey", paymentKey,
                 "orderId", orderId,
                 "amount", amount
         );
-        // 3. POST /v1/payments/confirm 호출
-        // 4. 성공 시 TossConfirmResponseDto 로 매핑
-
-        // Basic Auth 준비
-        String auth = props.getSecretKey() + ":";
-        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+        // POST /v1/payments/confirm 호출
+        // 성공 시 TossConfirmResponse 로 매핑
 
         return webClient.post()
                 .uri("/v1/payments/confirm")
-                .header(HttpHeaders.AUTHORIZATION, "Basic " + encodedAuth)
+                .header(HttpHeaders.AUTHORIZATION, basicAuth())
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(TossConfirmResponse.class)
                 .block(); // 동기식으로 결과 받기
     }
+
+    public TossCancelResponse cancel(String paymentKey, String reason) {
+
+        Map<String, Object> body = Map.of(
+                "cancelReason", reason
+        );
+
+        return webClient.post()
+                .uri("/v1/payments/{paymentKey}/cancel", paymentKey)
+                .header(HttpHeaders.AUTHORIZATION, basicAuth())
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(TossCancelResponse.class)
+                .block(); // 동기식
+        //                추후 수정 가능
+//                .retrieve()
+//                .onStatus(HttpStatusCode::isError, resp ->
+//                        resp.bodyToMono(String.class)
+//                                .map(body -> new CustomException(PAYMENT_CANCEL_FAILED))
+//                )
+    }
+
+    private String basicAuth() {
+        return "Basic " + Base64.getEncoder()
+                .encodeToString((props.getSecretKey() + ":").getBytes());
+    }
+
 }

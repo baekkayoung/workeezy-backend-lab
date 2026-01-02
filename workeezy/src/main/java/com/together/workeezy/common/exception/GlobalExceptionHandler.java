@@ -2,8 +2,11 @@ package com.together.workeezy.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static com.together.workeezy.common.exception.ErrorCode.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -40,5 +43,12 @@ public class GlobalExceptionHandler {
                 .body("서버 오류가 발생했습니다.");
     }
 
-
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidation(
+            MethodArgumentNotValidException e
+    ) {
+        return  ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(VALIDATION_ERROR));
+    }
 }

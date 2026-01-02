@@ -15,34 +15,18 @@ public enum ErrorCode {
     PAYMENT_ALREADY_COMPLETED(HttpStatus.CONFLICT, "이미 결제된 예약입니다."),
     ORDER_ID_MISMATCH(HttpStatus.BAD_REQUEST, "주문 번호가 일치하지 않습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보가 존재하지 않습니다."),
+    PAYMENT_NOT_REFUNDABLE(HttpStatus.BAD_REQUEST, "결제를 취소할 수 없는 상태입니다."),
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "요청 값이 올바르지 않습니다."),
+    RESERVATION_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "해당 예약은 취소할 수 없습니다.", "관리자에게 문의 바랍니다."),
+    REFUND_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 환불 정보가 존재합니다."),
+    REFUND_ALREADY_COMPLETED(HttpStatus.CONFLICT, "이미 환불이 완료된 상태입니다."),
 
     // 예약 제한 관련
-    RESERVATION_WAITING_LIMIT_EXCEEDED
-            (
-            HttpStatus.BAD_REQUEST,
-            "예약 대기 건수가 너무 많습니다.",
-            "예약 대기는 최대 5건까지 가능합니다."
-    ),
-    RESERVATION_APPROVED_LIMIT_EXCEEDED(
-            HttpStatus.BAD_REQUEST,
-            "결제 대기 중인 예약이 너무 많습니다.",
-            "결제 대기 상태는 최대 3건까지 가능합니다."
-    ),
-    RESERVATION_CONFIRMED_LIMIT_EXCEEDED(
-            HttpStatus.BAD_REQUEST,
-            "확정된 예약이 너무 많습니다.",
-            "확정된 예약은 최대 3건까지 가능합니다."
-    ),
-    RESERVATION_TOTAL_LIMIT_EXCEEDED(
-            HttpStatus.BAD_REQUEST,
-            "예약 가능 개수를 초과했습니다.",
-            "예약 가능 건수를 초과했습니다."
-    ),
+    RESERVATION_WAITING_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "예약 대기 건수가 너무 많습니다.", "예약 대기는 최대 5건까지 가능합니다."),
+    RESERVATION_APPROVED_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "결제 대기 중인 예약이 너무 많습니다.", "결제 대기 상태는 최대 3건까지 가능합니다."),
+    RESERVATION_CONFIRMED_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "확정된 예약이 너무 많습니다.", "확정된 예약은 최대 3건까지 가능합니다."),
+    RESERVATION_TOTAL_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "예약 가능 개수를 초과했습니다.", "예약 가능 건수를 초과했습니다."),
 
-    ROOM_ALREADY_RESERVED(HttpStatus.BAD_REQUEST,
-            "이미 예약이 된 날짜입니다.","다른 날짜를 선택하세요."),
-
-    RESERVATION_NOT_AVAILABLE(HttpStatus.BAD_REQUEST,"예약이 불가합니다.","이미 예약이 된 날짜입니다."),
     // 사용자
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 
@@ -61,7 +45,9 @@ public enum ErrorCode {
     INVALID_PASSWORD_LOWER(HttpStatus.BAD_REQUEST, "소문자가 포함되어야 합니다."),
     INVALID_PASSWORD_SPECIAL(HttpStatus.BAD_REQUEST, "특수문자가 포함되어야 합니다."),
 
-    PAYMENT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "승인 후 결제 가능합니다."),;
+    PAYMENT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "승인 후 결제 가능합니다."),
+    RESERVATION_NOT_AVAILABLE(HttpStatus.BAD_REQUEST,"예약이 불가능 합니다." );
+
     private final HttpStatus status;
     private final String message;
     private final String detail;
@@ -69,11 +55,13 @@ public enum ErrorCode {
     ErrorCode(HttpStatus status, String message) {
         this(status, message, null);
     }
+
     ErrorCode(HttpStatus status, String message, String detail) {
         this.status = status;
         this.message = message;
         this.detail = detail;
     }
+
     public HttpStatus getStatus() {
         return status;
     }
