@@ -7,6 +7,30 @@ app = Flask(__name__)
 
 SPRING_BASE = os.getenv("SPRING_BASE_URL", "http://workeezy-backend:8080")
 BUILD_TAG = os.getenv("BUILD_TAG", "chatbot-v3")  # ✅ 응답에 찍어서 코드 반영 확인용
+S3_BASE_URL = os.getenv("S3_BASE_URL", "").rstrip("/")
+
+def to_abs_image_url(photo: str | None) -> str | None:
+    if not photo:
+        return None
+
+    p = str(photo).strip()
+    if not p:
+        return None
+
+    # 이미 절대 URL이면 그대로
+    if p.startswith("http://") or p.startswith("https://"):
+        return p
+
+    # "public/..." 또는 "/public/..." 형태를 S3_BASE_URL 붙여서 절대경로로
+    if not S3_BASE_URL:
+        # S3_BASE_URL이 없으면 그냥 원본 반환(이미지 깨지는 것 방지용)
+        return p
+
+    if p.startswith("/"):
+        p = p[1:]
+
+    return f"{S3_BASE_URL}/{p}"
+
 
 def kakao_text(text: str):
     return {
@@ -86,7 +110,7 @@ def search_program():
         title = c.get("title", "")
         region = c.get("region", "")
         price = c.get("price", 0)
-        photo = c.get("photo")
+        photo = to_abs_image_url(c.get("photo"))
 
         desc = f"{region} · {price:,}원" if price else region
 
@@ -95,11 +119,18 @@ def search_program():
             "description": desc,
         }
 
-        # 이미지 (절대 URL이면 그대로 사용)
         if photo:
             item["imageUrl"] = photo
+       
 
+        # 👉 프론트 상세페이지 연결
+        if pid:
+            item["link"] = {
+                "web": f"https://workeezy.cloud/programs/{pid}",
+                "mobileWeb": f"https://workeezy.cloud/programs/{pid}",
+            }
 
+        items.append(item)
 
     buttons = [
         {
@@ -116,3 +147,4 @@ def search_program():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
+
