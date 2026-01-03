@@ -163,6 +163,17 @@ public class ReservationController {
         return ResponseEntity.ok("예약 취소 완료");
     }
 
+    // * 예약 취소 요청 *
+    @PatchMapping("/{id}/cancel-request")
+    public ResponseEntity<?> requestCancelReservation(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        reservationService.requestCancelMyReservation(id, authentication.getName());
+        return ResponseEntity.ok("예약 취소 요청 완료");
+    }
+
+
     /// =============== pdf ============= //
     ///
     // pdf 조회(미리보기용) JSON

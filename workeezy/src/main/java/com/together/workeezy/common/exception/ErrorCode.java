@@ -26,6 +26,10 @@ public enum ErrorCode {
     RESERVATION_APPROVED_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "결제 대기 중인 예약이 너무 많습니다.", "결제 대기 상태는 최대 3건까지 가능합니다."),
     RESERVATION_CONFIRMED_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "확정된 예약이 너무 많습니다.", "확정된 예약은 최대 3건까지 가능합니다."),
     RESERVATION_TOTAL_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "예약 가능 개수를 초과했습니다.", "예약 가능 건수를 초과했습니다."),
+    RESERVATION_NOT_AVAILABLE(HttpStatus.BAD_REQUEST,"예약이 불가능 합니다." ),
+    INVALID_PEOPLE_COUNT(HttpStatus.BAD_REQUEST,"예약 인원은 1명 이상이어야 합니다."),
+    EXCEED_MAX_PEOPLE_COUNT(HttpStatus.BAD_REQUEST,"프로그램 최대 인원을 초과합니다.","인원수를 다시 확인해 주세요."),
+    RESERVATION_CANCEL_IMMEDIATE_ALLOWED(HttpStatus.BAD_REQUEST,"해당 예약은 즉시 취소가 가능합니다." ),
 
     // 사용자
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
@@ -45,7 +49,8 @@ public enum ErrorCode {
     INVALID_PASSWORD_LOWER(HttpStatus.BAD_REQUEST, "소문자가 포함되어야 합니다."),
     INVALID_PASSWORD_SPECIAL(HttpStatus.BAD_REQUEST, "특수문자가 포함되어야 합니다."),
 
-    PAYMENT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "승인 후 결제 가능합니다."), RESERVATION_NOT_AVAILABLE(HttpStatus.BAD_REQUEST,"예약이 불가능 합니다." ), INVALID_PEOPLE_COUNT(HttpStatus.BAD_REQUEST,"예약 인원은 1명 이상이어야 합니다."), EXCEED_MAX_PEOPLE_COUNT(HttpStatus.BAD_REQUEST,"프로그램 최대 인원을 초과합니다.","인원수를 다시 확인해 주세요.");
+    PAYMENT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "승인 후 결제 가능합니다.");
+
     
     private final HttpStatus status;
     private final String message;

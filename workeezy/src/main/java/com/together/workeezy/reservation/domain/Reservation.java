@@ -268,7 +268,7 @@ public class Reservation {
             return true;
         }
 
-        // 취소 요청(예약2일전~당일)
+        // 취소 요청 상태로 변경(예약2일전~당일)
         if (status.canRequestCancel(diffDays)) {
             this.status = ReservationStatus.cancel_requested;
             return false;

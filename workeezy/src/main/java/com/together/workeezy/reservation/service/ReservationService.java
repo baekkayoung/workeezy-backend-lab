@@ -369,6 +369,20 @@ public class ReservationService {
         reservation.cancelByUser();
     }
 
+    // 취소 요청
+    @Transactional
+    public void requestCancelMyReservation(Long id, String email) {
+        Reservation reservation = getMyReservationOrThrow(id, email);
+
+        boolean cancelled = reservation.cancelByUser();
+
+        if (cancelled) {
+            // 즉시 취소 가능한 상태인데
+            // 굳이 취소 요청 API를 탄 경우
+            throw new CustomException(ErrorCode.RESERVATION_CANCEL_IMMEDIATE_ALLOWED);
+        }
+    }
+
     // ============================================================================
 
 
