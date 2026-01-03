@@ -1,5 +1,6 @@
 package com.together.workeezy.common.exception;
 
+import co.elastic.clients.elasticsearch.nodes.Http;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
@@ -30,6 +31,8 @@ public enum ErrorCode {
     INVALID_PEOPLE_COUNT(HttpStatus.BAD_REQUEST,"예약 인원은 1명 이상이어야 합니다."),
     EXCEED_MAX_PEOPLE_COUNT(HttpStatus.BAD_REQUEST,"프로그램 최대 인원을 초과합니다.","인원수를 다시 확인해 주세요."),
     RESERVATION_CANCEL_IMMEDIATE_ALLOWED(HttpStatus.BAD_REQUEST,"해당 예약은 즉시 취소가 가능합니다." ),
+    RESERVATION_EXPIRED(HttpStatus.BAD_REQUEST,"만료된 예약입니다."),
+    RESERVATION_START_DATE_IN_PAST(HttpStatus.BAD_REQUEST,"예약 날짜가 이미 지났습니다." ),
 
     // 사용자
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),

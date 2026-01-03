@@ -178,8 +178,27 @@ public class Reservation {
             throw new CustomException(ErrorCode.EXCEED_MAX_PEOPLE_COUNT);
         }
     }
+    
+    // 만료 상태 검증
+    public boolean isExpired() {
+        return this.startDate.isBefore(LocalDateTime.now());
+    }
 
 
+    // 유효 검증 (만료X)
+    private void assertNotExpired() {
+        if (isExpired()) {
+            throw new CustomException(ErrorCode.RESERVATION_EXPIRED);
+        }
+    }
+    
+    // 재신청시 예약 날짜 체크
+    private static void validateStartDateNotPast(LocalDateTime start) {
+        if (start.isBefore(LocalDateTime.now())) {
+            throw new CustomException(ErrorCode.RESERVATION_START_DATE_IN_PAST);
+        }
+    }
+    
 
     // ================================ 예약 CRUD ========================= //
 
@@ -223,6 +242,7 @@ public class Reservation {
             int peopleCount,
             Room room
     ) {
+        assertNotExpired();
         validateUpdatable(); // 수정 가능한지
         validateDate(startDate, endDate); // 날짜 규칙
         validatePeopleCount(peopleCount, program);
@@ -241,6 +261,7 @@ public class Reservation {
                          LocalDateTime endDate,
                          int peopleCount,
                          Room room) {
+        validateStartDateNotPast(startDate);
         validateRequestResubmit();
         validateDate(startDate, endDate);
         validatePeopleCount(peopleCount, program);
@@ -260,6 +281,7 @@ public class Reservation {
 
     // ***** 예약 취소 *****
     public boolean cancelByUser() {
+        assertNotExpired();
         int diffDays = daysUntilStart();
 
         // 즉시 취소(예약 3일전)
@@ -321,6 +343,7 @@ public class Reservation {
 
     // 예약 승인 (waiting_payment → approved)
     public void approve() {
+        assertNotExpired();
         if (this.status != ReservationStatus.waiting_payment) {
             throw new IllegalStateException("결제 대기 상태에서만 승인할 수 있습니다.");
         }
@@ -329,6 +352,7 @@ public class Reservation {
 
     // 예약 반려 (waiting_payment → rejected)
     public void reject(String reason) {
+        assertNotExpired();
         if (this.status != ReservationStatus.waiting_payment) {
             throw new IllegalStateException("결제 대기 상태에서만 반려할 수 있습니다.");
         }
