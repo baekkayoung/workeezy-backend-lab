@@ -19,6 +19,7 @@ app:
   cookie:
     secure: true
     same-site: None
+    domain: .workeezy.cloud
 
 logging:
   level:
