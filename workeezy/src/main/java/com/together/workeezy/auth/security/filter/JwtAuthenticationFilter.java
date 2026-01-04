@@ -114,8 +114,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 다음 필터로 이동
         filterChain.doFilter(request, response);
 
-        log.info("🧠 [JwtFilter END] context auth = {}",
-                SecurityContextHolder.getContext().getAuthentication());
+        log.info("========== JWT FILTER END ==========");
     }
 
     // Authorization 헤더 + HttpOnly 쿠키
