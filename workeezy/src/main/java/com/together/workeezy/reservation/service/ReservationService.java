@@ -156,13 +156,13 @@ public class ReservationService {
 
 
     // 신규 예약
-    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate) {
-        return isRoomAvailableInternal(roomId, startDate, null);
-    }
+//    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate) {
+//        return isRoomAvailableInternal(roomId, startDate, null);
+//    }
 
     // 예약 수정
-    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate, Long excludeId) {
-        return isRoomAvailableInternal(roomId, startDate, excludeId);
+    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate, LocalDateTime endDate,Long excludeId) {
+        return isRoomAvailableInternal(roomId, startDate, endDate,excludeId);
     }
 
 
@@ -170,25 +170,26 @@ public class ReservationService {
     private boolean isRoomAvailableInternal(
             Long roomId,
             LocalDateTime startDate,
+            LocalDateTime endDate,
             Long excludeId
     ) {
 
-        LocalDateTime normalizedStart = normalizeCheckIn(startDate);
-        LocalDateTime endDate = normalizeCheckOut(startDate);
+//        LocalDateTime normalizedStart = normalizeCheckIn(startDate);
+//        LocalDateTime endDate = normalizeCheckOut(startDate);
 
         boolean exists;
         if (excludeId == null) {
             exists = reservationRepository.existsOverlap(
-                    roomId, normalizedStart, endDate
+                    roomId, startDate, endDate
             );
         } else {
             exists = reservationRepository.existsOverlapExcept(
-                    roomId, normalizedStart, endDate, excludeId
+                    roomId, startDate, endDate, excludeId
             );
         }
 
         log.info("🧩 [예약 체크] roomId={}, start={}, end={}, exists={}",
-                roomId, normalizedStart, endDate, exists);
+                roomId, startDate, endDate, exists);
 
         return !exists;
     }
@@ -314,6 +315,7 @@ public class ReservationService {
         boolean available = isRoomAvailable(
                 room.getId(),
                 startDate,
+                endDate,
                 reservation.getId()
         );
 
@@ -344,6 +346,7 @@ public class ReservationService {
         boolean available = isRoomAvailable(
                 room.getId(),
                 startDate,
+                endDate,
                 reservation.getId()
         );
 

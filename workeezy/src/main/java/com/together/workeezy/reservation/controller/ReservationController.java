@@ -45,11 +45,13 @@ public class ReservationController {
     public ResponseEntity<?> checkAvailability(
             @RequestParam Long roomId,
             @RequestParam OffsetDateTime startDate,
+            @RequestParam OffsetDateTime endDate,
             @RequestParam(required = false) Long excludeId
     ) {
         boolean available = reservationService.isRoomAvailable(
                 roomId,
                 startDate.toLocalDateTime(),
+                endDate.toLocalDateTime(),
                 excludeId
         );
 
