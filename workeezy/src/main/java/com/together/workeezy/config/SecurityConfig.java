@@ -80,7 +80,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/reservations/me").authenticated()
                         .requestMatchers("/api/reservations/**").authenticated()
 
-                        .requestMatchers("/api/payments/confirm").permitAll()
+//                        .requestMatchers("/api/payments/confirm").permitAll()
                         .requestMatchers("/api/payments/**").authenticated()
 
                         // 관리자 전용

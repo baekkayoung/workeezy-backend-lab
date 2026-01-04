@@ -29,8 +29,8 @@ public class PaymentConfirmService {
 
     @Transactional
     public PaymentConfirmResponse confirm(PaymentConfirmCommand cmd) {
-        log.info("🔥 confirm START orderId={}, amount={}, paymentKey={}, user={}",
-                cmd.orderId(), cmd.amount(), cmd.paymentKey(), cmd.userEmail());
+        log.info("🔥 confirm START orderId={}, amount={}, paymentKey={}",
+                cmd.orderId(), cmd.amount(), cmd.paymentKey());
 
         // 예약 조회
         Reservation reservation = reservationRepository

@@ -49,9 +49,13 @@ public class PaymentController {
 
     @PostMapping("/confirm")
     public ResponseEntity<PaymentConfirmResponse> confirmPayment(
-            @RequestBody @Valid PaymentConfirmRequest request) {
+            @RequestBody @Valid PaymentConfirmRequest request,
+            @AuthenticationPrincipal CustomUserDetails user) {
         log.info("🔥 confirm API called");
 
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(
                 paymentConfirmService.confirm(
                         request.toCommand() // email 없음
