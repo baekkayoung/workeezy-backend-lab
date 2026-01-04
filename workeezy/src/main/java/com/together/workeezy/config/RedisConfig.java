@@ -1,7 +1,6 @@
 package com.together.workeezy.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -31,13 +30,7 @@ public class RedisConfig {
 
     // 임시 저장용
     @Bean(name = "draftRedisTemplate")
-    public RedisTemplate<String, Object> draftRedisTemplate() {
-
-        // db 연결
-        // 구현체 LettuceConnectionFactory
-        LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory();
-        connectionFactory.setDatabase(1); // DB번호 1번
-        connectionFactory.afterPropertiesSet(); // Spring으로 빈으로 관리하지 않는 Lettuce- 를 직접 초기화
+    public RedisTemplate<String, Object> draftRedisTemplate(RedisConnectionFactory connectionFactory) {
 
         // 키:문자열, 값:객체인 레디스 템플릿 생성
         RedisTemplate<String, Object> template = new RedisTemplate<>();

@@ -10,5 +10,6 @@ public record ProgramReservationInfoDto(
         String stayName,
         Long officeId,
         String officeName,
-        List<RoomSimpleDto> rooms
+        List<RoomSimpleDto> rooms,
+        int programPeople
 ) {}

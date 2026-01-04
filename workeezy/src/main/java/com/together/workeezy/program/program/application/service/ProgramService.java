@@ -181,7 +181,8 @@ public class ProgramService {
                 stay.getName(),
                 office.getId(),
                 office.getName(),
-                rooms
+                rooms,
+                program.getProgramPeople()
         );
     }
 }

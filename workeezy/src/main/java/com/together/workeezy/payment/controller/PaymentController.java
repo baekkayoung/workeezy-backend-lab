@@ -7,8 +7,9 @@ import com.together.workeezy.payment.dto.request.PaymentConfirmRequest;
 import com.together.workeezy.payment.dto.response.PaymentCancelResponse;
 import com.together.workeezy.payment.dto.response.PaymentConfirmResponse;
 import com.together.workeezy.payment.dto.response.PaymentReadyResponse;
-import com.together.workeezy.payment.service.PaymentCancelUseCase;
-import com.together.workeezy.payment.service.PaymentConfirmUseCase;
+import com.together.workeezy.payment.service.PaymentCancelService;
+import com.together.workeezy.payment.service.PaymentConfirmService;
+import com.together.workeezy.payment.service.PaymentReadyService;
 import com.together.workeezy.reservation.domain.Reservation;
 import com.together.workeezy.reservation.repository.ReservationRepository;
 import jakarta.validation.Valid;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,36 +32,32 @@ import static com.together.workeezy.common.exception.ErrorCode.*;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentConfirmUseCase paymentConfirmUseCase;
-    private final PaymentCancelUseCase paymentCancelUseCase;
-    private final ReservationRepository reservationRepository;
+    private final PaymentConfirmService paymentConfirmService;
+    private final PaymentCancelService paymentCancelService;
+    private final PaymentReadyService paymentReadyService;
 
+    @Transactional(readOnly = true)
     @GetMapping("/{reservationId:\\d+}")
     public PaymentReadyResponse readyPayment(
             @PathVariable Long reservationId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-        log.info("🔥 PaymentReady 진입");
-        Reservation reservation = reservationRepository
-                .findById(reservationId)
-                .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
+        log.info("🔥 PaymentReady Controller 진입");
 
-        reservation.assertPayable();
-
-        return new PaymentReadyResponse(
-                reservation.getReservationNo(),
-                reservation.getProgram().getTitle(),
-                reservation.getTotalPrice()
-        );
+        return paymentReadyService.ready(reservationId, user.getUserId());
     }
 
     @PostMapping("/confirm")
     public ResponseEntity<PaymentConfirmResponse> confirmPayment(
-            @RequestBody @Valid PaymentConfirmRequest request) {
+            @RequestBody @Valid PaymentConfirmRequest request,
+            @AuthenticationPrincipal CustomUserDetails user) {
         log.info("🔥 confirm API called");
 
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(
-                paymentConfirmUseCase.confirm(
+                paymentConfirmService.confirm(
                         request.toCommand() // email 없음
                 )
         );
@@ -71,7 +69,7 @@ public class PaymentController {
             @RequestBody @Valid PaymentCancelRequest request) {
 
         return ResponseEntity.ok(
-                paymentCancelUseCase.cancel(paymentId, request));
+                paymentCancelService.cancel(paymentId, request));
     }
 
 //    @GetMapping("/receipt/{reservationId}")

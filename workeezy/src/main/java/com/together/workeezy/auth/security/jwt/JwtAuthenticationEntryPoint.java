@@ -21,6 +21,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     ) throws IOException {
         log.error("🚨 [EntryPoint] 401 UNAUTHORIZED triggered - {}", authException.getMessage());
 
+        String uri = request.getRequestURI();
+
+        // permitAll 경로는 EntryPoint에서 401 내지 말기
+        if (uri.startsWith("/api/reservations/availability")
+                || uri.equals("/error")) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
         // 인증 안 됐으면 무조건 401
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }

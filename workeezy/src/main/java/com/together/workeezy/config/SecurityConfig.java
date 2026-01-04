@@ -56,7 +56,6 @@ public class SecurityConfig {
                         .requestMatchers("/health", "/health/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
 
-
                         // Auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
@@ -76,10 +75,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/recommendations/**").permitAll()
 
                         // Reservations / Payments
+                        .requestMatchers("/api/reservations/availability/**").permitAll()
                         .requestMatchers("/api/reservations/draft/**").authenticated()
                         .requestMatchers("/api/reservations/me").authenticated()
                         .requestMatchers("/api/reservations/**").authenticated()
-                        .requestMatchers("/api/payments/confirm").permitAll()
+
+//                        .requestMatchers("/api/payments/confirm").permitAll()
                         .requestMatchers("/api/payments/**").authenticated()
 
                         // 관리자 전용

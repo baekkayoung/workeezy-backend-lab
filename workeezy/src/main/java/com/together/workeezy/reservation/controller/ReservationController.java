@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 @RestController
@@ -43,16 +44,20 @@ public class ReservationController {
     @GetMapping("/availability")
     public ResponseEntity<?> checkAvailability(
             @RequestParam Long roomId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime startDate,
+            @RequestParam OffsetDateTime startDate,
+            @RequestParam OffsetDateTime endDate,
             @RequestParam(required = false) Long excludeId
     ) {
-        boolean available = reservationService.isRoomAvailable(roomId, startDate,excludeId);
-
-        return ResponseEntity.ok(
-                Map.of("available", available)
+        boolean available = reservationService.isRoomAvailable(
+                roomId,
+                startDate.toLocalDateTime(),
+                endDate.toLocalDateTime(),
+                excludeId
         );
+
+        return ResponseEntity.ok(Map.of("available", available));
     }
+
 
     // 내 예약 목록 조회
 //    @GetMapping("/me")
@@ -159,6 +164,17 @@ public class ReservationController {
         reservationService.cancelMyReservation(id, authentication.getName());
         return ResponseEntity.ok("예약 취소 완료");
     }
+
+    // * 예약 취소 요청 *
+    @PatchMapping("/{id}/cancel-request")
+    public ResponseEntity<?> requestCancelReservation(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        reservationService.requestCancelMyReservation(id, authentication.getName());
+        return ResponseEntity.ok("예약 취소 요청 완료");
+    }
+
 
     /// =============== pdf ============= //
     ///

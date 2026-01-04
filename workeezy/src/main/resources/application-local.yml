@@ -4,7 +4,7 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-#    url: jdbc:mysql://workeezy.iptime.org:3306/workeezy
+#    url: jdbc:mysql://workeezy.iptime.org:3306/workeezy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
 #    username: ${DB_USERNAME}
 #    password: ${DB_PASSWORD}
 
@@ -34,6 +34,7 @@ app:
   cookie:
     secure: false
     same-site: Lax
+    domain:
 
 logging:
   level:

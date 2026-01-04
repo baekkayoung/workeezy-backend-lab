@@ -7,8 +7,8 @@ spring:
 
   data:
     redis:
-      host: ${SPRING_REDIS_HOST}
-      port: ${SPRING_REDIS_PORT}
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
 
   jpa:
     hibernate:
@@ -19,6 +19,7 @@ app:
   cookie:
     secure: true
     same-site: None
+    domain: .workeezy.cloud
 
 logging:
   level:
@@ -31,6 +32,12 @@ jwt:
   access-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS}
   refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS}
 
+toss:
+  payments:
+    secret-key: ${TOSS_SECRET_KEY}
+    client-key: ${TOSS_CLIENT_KEY}
+    base-url: https://api.tosspayments.com
+
 cloud:
   aws:
     s3:
@@ -38,7 +45,6 @@ cloud:
     region:
       static: ap-northeast-2
 
-toss:
-  payments:
-    secret-key: ${TOSS_SECRET_KEY}
-    client-key: ${TOSS_CLIENT_KEY}
+draft:
+  max-count: 5
+  ttl-days: 14

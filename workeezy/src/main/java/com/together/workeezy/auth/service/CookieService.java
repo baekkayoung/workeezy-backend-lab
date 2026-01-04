@@ -21,6 +21,9 @@ public class CookieService {
     @Value("${app.cookie.same-site}")
     private String sameSite;
 
+    @Value("${app.cookie.domain}")
+    private String domain;
+
     // accessToken 쿠키 생성 (인증용)
     public void addAccessCookie(
             HttpServletResponse response,
@@ -30,6 +33,7 @@ public class CookieService {
                 .httpOnly(true)
                 .secure(secure)
                 .sameSite(sameSite)
+                .domain(domain)
                 .path("/")                              // 모든 API에 전송
                 .maxAge(jwtTokenProvider.getAccessExpiration() / 1000)
                 .build();
@@ -61,6 +65,7 @@ public class CookieService {
                 .httpOnly(true)
                 .secure(secure)
                 .sameSite(sameSite)
+                .domain(domain)
                 .path("/")
                 .maxAge(autoLogin
                         ? jwtTokenProvider.getRefreshExpiration() / 1000

@@ -30,13 +30,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 토큰 검증 제외할 URL (화이트리스트)
     private static final List<String> WHITELIST = List.of(
             "/api/auth/login",
-            "/api/auth/refresh",
+//            "/api/auth/refresh",
             "/api/programs/**",
             "/api/recommendations/**",
             "/actuator/**",
-            "/api/reviews",
-            "/api/reviews/**",
-            "/api/payments/confirm",
+//            "/api/payments/confirm",
+            "/api/reservations/availability/**",
             "/ping",              // debug
             "/error"
     );
@@ -48,20 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        log.info("""
-                        🔎 [JwtFilter ENTER]
-                        - method        = {}
-                        - requestURI    = {}
-                        - servletPath   = {}
-                        - contextPath   = {}
-                        - queryString   = {}
-                        """,
-                request.getMethod(),
-                request.getRequestURI(),
-                request.getServletPath(),
-                request.getContextPath(),
-                request.getQueryString()
-        );
+        String uri = request.getRequestURI();
 
         // OPTIONS 요청은 항상 허용 (CORS Preflight)
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
@@ -70,7 +56,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // refresh는 완전 스킵
+        if (uri.startsWith("/api/auth/refresh")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 3) whitelist 스킵
         if (isWhitelisted(request)) {
+            log.info("➡️ [JwtFilter SKIP] whitelisted: {}", uri);
             filterChain.doFilter(request, response);
             return;
         }
@@ -88,12 +82,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //            log.info("➡️ [JwtFilter PASS] not whitelisted: {}" + pattern);
 //        }
         log.info("========== JWT FILTER START ==========");
-        log.info("📌 URI = " + request.getRequestURI());
+        log.info("📌 URI = " + uri);
 
-        // 토큰 추출
+        // accessToken 추출
         String token = resolveToken(request);
         log.info("🔐 [JwtFilter TOKEN] token = {}", token == null ? "NULL" : "EXISTS");
-
         // 토큰 없으면 -> 익명 요청으로 통과
         if (token == null) {
             filterChain.doFilter(request, response);
@@ -103,7 +96,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 블랙리스트 토큰이면 인증 세팅 안 함
         if (tokenRedisService.isBlacklisted(token)) {
             log.warn("🚫 [JwtFilter] blacklisted token");
-            SecurityContextHolder.clearContext();
             filterChain.doFilter(request, response);
             return;
         }
@@ -115,23 +107,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
 
             if (auth != null) {
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(auth);
-
+                SecurityContextHolder.getContext().setAuthentication(auth);
                 log.info("✅ [JwtFilter AUTH] authenticated user = {}", auth.getName());
             }
-        } else {
-            SecurityContextHolder.clearContext();
-            log.warn("❌ [JwtFilter] invalid token");
-            log.info("========== JWT FILTER END ==========");
         }
-
         // 다음 필터로 이동
         filterChain.doFilter(request, response);
 
-        log.info("🧠 [JwtFilter END] context auth = {}",
-                SecurityContextHolder.getContext().getAuthentication());
+        log.info("========== JWT FILTER END ==========");
     }
 
     // Authorization 헤더 + HttpOnly 쿠키

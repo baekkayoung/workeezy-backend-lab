@@ -3,7 +3,6 @@ package com.together.workeezy.payment.client;
 import com.together.workeezy.payment.config.TossPaymentProperties;
 import com.together.workeezy.payment.dto.response.TossCancelResponse;
 import com.together.workeezy.payment.dto.response.TossConfirmResponse;
-import com.together.workeezy.payment.entity.Payment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TossPaymentClient {
 
-    private final WebClient webClient;
+    private final WebClient tossWebClient;
     private final TossPaymentProperties props;
 
     public TossConfirmResponse confirm(String paymentKey,
@@ -34,8 +33,10 @@ public class TossPaymentClient {
         );
         // POST /v1/payments/confirm 호출
         // 성공 시 TossConfirmResponse 로 매핑
+        log.info("🔥 calling Toss confirm paymentKey={}, orderId={}, amount={}",
+                paymentKey, orderId, amount);
 
-        return webClient.post()
+        return tossWebClient.post()
                 .uri("/v1/payments/confirm")
                 .header(HttpHeaders.AUTHORIZATION, basicAuth())
                 .bodyValue(body)
@@ -50,7 +51,7 @@ public class TossPaymentClient {
                 "cancelReason", reason
         );
 
-        return webClient.post()
+        return tossWebClient.post()
                 .uri("/v1/payments/{paymentKey}/cancel", paymentKey)
                 .header(HttpHeaders.AUTHORIZATION, basicAuth())
                 .bodyValue(body)

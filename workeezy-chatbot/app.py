@@ -99,14 +99,7 @@ def search_program():
         if photo:
             item["imageUrl"] = photo
 
-        # 👉 프론트 상세페이지 연결
-        if pid:
-            item["link"] = {
-                "web": f"https://workeezy.cloud/programs/{pid}",
-                "mobileWeb": f"https://workeezy.cloud/programs/{pid}",
-            }
 
-        items.append(item)
 
     buttons = [
         {

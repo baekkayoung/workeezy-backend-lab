@@ -156,13 +156,13 @@ public class ReservationService {
 
 
     // 신규 예약
-    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate) {
-        return isRoomAvailableInternal(roomId, startDate, null);
-    }
+//    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate) {
+//        return isRoomAvailableInternal(roomId, startDate, null);
+//    }
 
     // 예약 수정
-    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate, Long excludeId) {
-        return isRoomAvailableInternal(roomId, startDate, excludeId);
+    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate, LocalDateTime endDate,Long excludeId) {
+        return isRoomAvailableInternal(roomId, startDate, endDate,excludeId);
     }
 
 
@@ -170,9 +170,12 @@ public class ReservationService {
     private boolean isRoomAvailableInternal(
             Long roomId,
             LocalDateTime startDate,
+            LocalDateTime endDate,
             Long excludeId
     ) {
-        LocalDateTime endDate = startDate.plusDays(2);
+
+//        LocalDateTime normalizedStart = normalizeCheckIn(startDate);
+//        LocalDateTime endDate = normalizeCheckOut(startDate);
 
         boolean exists;
         if (excludeId == null) {
@@ -312,6 +315,7 @@ public class ReservationService {
         boolean available = isRoomAvailable(
                 room.getId(),
                 startDate,
+                endDate,
                 reservation.getId()
         );
 
@@ -342,6 +346,7 @@ public class ReservationService {
         boolean available = isRoomAvailable(
                 room.getId(),
                 startDate,
+                endDate,
                 reservation.getId()
         );
 
@@ -365,6 +370,20 @@ public class ReservationService {
         Reservation reservation = getMyReservationOrThrow(id, email);
 
         reservation.cancelByUser();
+    }
+
+    // 취소 요청
+    @Transactional
+    public void requestCancelMyReservation(Long id, String email) {
+        Reservation reservation = getMyReservationOrThrow(id, email);
+
+        boolean cancelled = reservation.cancelByUser();
+
+        if (cancelled) {
+            // 즉시 취소 가능한 상태인데
+            // 굳이 취소 요청 API를 탄 경우
+            throw new CustomException(ErrorCode.RESERVATION_CANCEL_IMMEDIATE_ALLOWED);
+        }
     }
 
     // ============================================================================

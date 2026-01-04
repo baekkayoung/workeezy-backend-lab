@@ -8,7 +8,6 @@ import com.together.workeezy.payment.entity.Payment;
 import com.together.workeezy.payment.entity.Refund;
 import com.together.workeezy.payment.repository.PaymentRepository;
 import com.together.workeezy.reservation.domain.Reservation;
-import com.together.workeezy.reservation.enums.ReservationStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ import static com.together.workeezy.common.exception.ErrorCode.PAYMENT_NOT_FOUND
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PaymentCancelUseCase {
+public class PaymentCancelService {
 
     private final PaymentRepository paymentRepository;
     private final TossPaymentClient tossPaymentClient;
