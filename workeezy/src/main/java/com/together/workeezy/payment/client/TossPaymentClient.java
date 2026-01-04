@@ -34,6 +34,8 @@ public class TossPaymentClient {
         );
         // POST /v1/payments/confirm 호출
         // 성공 시 TossConfirmResponse 로 매핑
+        log.info("🔥 calling Toss confirm paymentKey={}, orderId={}, amount={}",
+                paymentKey, orderId, amount);
 
         return webClient.post()
                 .uri("/v1/payments/confirm")
