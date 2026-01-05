@@ -122,29 +122,13 @@ def search_program():
         if photo:
             item["imageUrl"] = photo
        
-
-        # 👉 프론트 상세페이지 연결
-        if pid:
-            item["link"] = {
-                "web": f"https://workeezy.cloud/programs/{pid}",
-                "mobileWeb": f"https://workeezy.cloud/programs/{pid}",
-            }
-
         items.append(item)
 
-    buttons = [
-        {
-            "label": "전체 결과 보기",
-            "action": "webLink",
-            "webLinkUrl": f"https://workeezy.cloud/search?keyword={keyword}",
-        }
-    ]
-
     return jsonify(
-        kakao_list(f"'{keyword}' 검색 결과", items, buttons)
+        kakao_list(f"'{keyword}' 검색 결과", items)
     )
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=8000)
 
