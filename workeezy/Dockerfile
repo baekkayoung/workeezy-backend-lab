@@ -2,8 +2,15 @@
 FROM eclipse-temurin:17-jdk AS builder
 WORKDIR /app
 
-COPY . .
-RUN chmod +x gradlew && ./gradlew clean build -x test
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
+
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon
+
+COPY src src
+
+RUN ./gradlew clean build -x test --no-daemon
 
 # ===== run =====
 FROM eclipse-temurin:17-jre
