@@ -49,7 +49,9 @@ public final class ProgramDetailAssembler {
                     p.getPlacePhoto1(),
                     p.getPlacePhoto2(),
                     p.getPlacePhoto3(),
+                    p.getPlacePhoto4(),
                     p.getPlaceEquipment(),
+                    p.getAttractionUrl(),
                     p.getPlaceType(),
                     p.getPlaceRegion(),
                     roomDtos

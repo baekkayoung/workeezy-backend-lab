@@ -68,6 +68,10 @@ public class Place {
     @Column(name = "attraction_url", length = 100)
     private String attractionUrl;
 
+    @Size(max = 100)
+    @Column(name = "place_photo4", length = 100)
+    private String placePhoto4;
+
     protected Place() {
         // JPA용 기본 생성자
     }
@@ -98,10 +102,11 @@ public class Place {
         this.placeEquipment = placeEquipment;
     }
 
-    public void changePhotos(String photo1, String photo2, String photo3) {
+    public void changePhotos(String photo1, String photo2, String photo3, String photo4) {
         this.placePhoto1 = photo1;
         this.placePhoto2 = photo2;
         this.placePhoto3 = photo3;
+        this.placePhoto4 = photo4;
     }
 
     public void changeAttractionUrl(String attractionUrl) {

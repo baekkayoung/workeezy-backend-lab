@@ -11,7 +11,9 @@ public record PlaceDto(
         String photo1,
         String photo2,
         String photo3,
+        String photo4,
         String equipment,
+        String url,
         PlaceType type,
         String region,
         List<RoomDto> rooms   // 숙소인 경우에만 사용
