@@ -28,6 +28,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     List<ReviewDto> findAllReviewCards();
 
+
     // ✅ 특정 프로그램 리뷰 조회 (작성자 포함)
     @Query("""
             SELECT new com.together.workeezy.program.review.interfaces.dto.ReviewDto(
