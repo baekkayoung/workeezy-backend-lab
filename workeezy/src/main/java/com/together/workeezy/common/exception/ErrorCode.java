@@ -62,6 +62,9 @@ public enum ErrorCode {
     INVALID_PASSWORD_LOWER(HttpStatus.BAD_REQUEST, "소문자가 포함되어야 합니다."),
     INVALID_PASSWORD_SPECIAL(HttpStatus.BAD_REQUEST, "특수문자가 포함되어야 합니다.");
 
+    // 검색
+
+
     private final HttpStatus status;
     private final String message;
     private final String detail;

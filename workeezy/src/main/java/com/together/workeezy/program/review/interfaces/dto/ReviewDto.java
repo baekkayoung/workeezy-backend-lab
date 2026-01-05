@@ -6,6 +6,7 @@ public record ReviewDto(
         String programName,    // 프로그램명
         String reviewText,     // 리뷰 내용
         Integer rating,        // 별점
+        String userName,
         String image,          // 대표 이미지
         String region          // 지역 정보
 ) {
@@ -18,6 +19,7 @@ public record ReviewDto(
                 programName,
                 reviewText,
                 rating,
+                userName,
                 image,
                 region
         );

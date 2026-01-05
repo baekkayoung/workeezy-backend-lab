@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    // 전체 리뷰 카드 조회
+    // ✅ 전체 리뷰 카드 조회 (작성자 포함)
     @Query("""
             SELECT new com.together.workeezy.program.review.interfaces.dto.ReviewDto(
                 r.id,
@@ -17,17 +17,18 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                 p.title,
                 r.content,
                 r.reviewPoint,
+                u.userName,
                 null,
                 null
             )
             FROM Review r
             JOIN r.program p
+            JOIN r.user u
             ORDER BY r.reviewDate DESC
             """)
     List<ReviewDto> findAllReviewCards();
 
-
-    // 특정 프로그램 리뷰 조회
+    // ✅ 특정 프로그램 리뷰 조회 (작성자 포함)
     @Query("""
             SELECT new com.together.workeezy.program.review.interfaces.dto.ReviewDto(
                 r.id,
@@ -35,11 +36,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                 p.title,
                 r.content,
                 r.reviewPoint,
+                u.userName,   
                 null,
                 null
             )
             FROM Review r
             JOIN r.program p
+            JOIN r.user u
             WHERE p.id = :programId
             ORDER BY r.reviewDate DESC
             """)
