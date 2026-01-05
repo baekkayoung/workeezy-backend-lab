@@ -50,8 +50,8 @@ public class UserService {
             throw new CustomException(PASSWORD_CONFIRM_NOT_MATCH);
         }
 
-        // 기존 비밀번호와 새 비밀번호 동일한지 검
-        if (!passwordEncoder.matches(request.newPassword(), user.getPassword())) {
+        // 기존 비밀번호와 새 비밀번호 동일한지 검증
+        if (passwordEncoder.matches(request.newPassword(), user.getPassword())) {
             throw new CustomException(DUPLICATE_PASSWORD);
         }
 

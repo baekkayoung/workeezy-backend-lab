@@ -58,3 +58,7 @@ Thumbs.db
 # env
 *.env
 *.env.local
+
+# test config
+src/test/resources/application-test.yml
+

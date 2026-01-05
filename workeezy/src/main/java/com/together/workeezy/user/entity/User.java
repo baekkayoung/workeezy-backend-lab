@@ -77,6 +77,12 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<ReservationModify> reservationModifys = new ArrayList<>();
 
+    // 테스트용 생성자
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public static User reference(Long id) {
         User user = new User();
         user.id = id;
