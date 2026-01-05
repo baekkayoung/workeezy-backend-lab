@@ -85,7 +85,7 @@ public class User {
 
     // ======== 도메인 동작 ========
     public void changePhone(String newPhone) {
-//        validatePhone(newPhone);
+        validatePhone(newPhone);
         this.phone = newPhone;
     }
 
@@ -95,18 +95,17 @@ public class User {
     }
 
     // ======== 검증 로직 =========
-//    private static final Pattern PHONE_REGEX =
-//            Pattern.compile("^010-\\d{4}-\\d{4}$");
-//
-//    private void validatePhone(String phone) {
-//        if (phone == null || phone.isBlank()) {
-//            throw new IllegalArgumentException("Phone number required");
-//        }
-//
-//        if (!PHONE_REGEX.matcher(phone).matches()) {
-//            throw new IllegalArgumentException("Invalid phone format. (010-XXXX-XXXX)");
-//        }
-//    }
+    private void validatePhone(String phone) {
+        if (phone == null || phone.isBlank()) {
+            throw new CustomException(INVALID_PHONE_NUMBER);
+        }
+
+        String trimmedPhone = phone.trim();
+
+        if (!trimmedPhone.matches("^010-\\d{4}-\\d{4}$")) {
+            throw new CustomException(INVALID_PHONE_NUMBER);
+        }
+    }
 
     private void validatePasswordRule(String password) {
 //        if (password == null || password.isBlank()) {
