@@ -8,9 +8,13 @@ import com.together.workeezy.reservation.dto.RejectReservationRequestDto;
 import com.together.workeezy.reservation.service.AdminReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/admin/reservations")
@@ -35,12 +39,22 @@ public class AdminReservationController {
     @GetMapping("/cursor")
     public CursorPageResponse<AdminReservationListDto> getReservationsByCursor(
             @RequestParam(required = false) ReservationStatus status,
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long cursor,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate checkInFrom,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate  checkInTo,
             @RequestParam(defaultValue = "20") int size
     ) {
         return adminReservationService.getAdminReservationsByCursor(
                 status,
+                keyword,
                 cursor,
+                checkInFrom,
+                checkInTo,
                 size
         );
     }

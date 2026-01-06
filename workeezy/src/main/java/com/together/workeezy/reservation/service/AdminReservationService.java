@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -55,13 +57,27 @@ public class AdminReservationService {
     // 커서 기반 페이지네이션
     public CursorPageResponse<AdminReservationListDto> getAdminReservationsByCursor(
             ReservationStatus status,
+            String keyword,
             Long cursor,
+            LocalDate checkInFrom,
+            LocalDate  checkInTo,
             int size
     ) {
+        LocalDateTime from = checkInFrom != null
+                ? checkInFrom.atStartOfDay()
+                : null;
+
+        LocalDateTime to = checkInTo != null
+                ? checkInTo.atTime(23, 59, 59)
+                : null;
+
         List<AdminReservationListDto> results =
                 reservationRepository.findAdminReservationsByCursor(
                         status,
+                        keyword,
                         cursor,
+                        from,
+                        to,
                         PageRequest.of(0, size+1)
                 );
 

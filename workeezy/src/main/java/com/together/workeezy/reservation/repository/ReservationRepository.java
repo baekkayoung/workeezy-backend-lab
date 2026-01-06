@@ -172,12 +172,24 @@ order by r.id desc
     join r.user u
     join r.program p
     where (:status is null or r.status = :status)
+    and (
+           :keyword is null
+           or :keyword = ''
+           or u.userName like concat('%', :keyword, '%')
+           or p.title like concat('%', :keyword, '%')
+           or r.reservationNo like concat('%', :keyword, '%')
+      )
       and (:cursor is null or r.id < :cursor)
+      and (:checkInFrom is null or r.startDate >= :checkInFrom)
+      and (:checkInTo   is null or r.startDate <  :checkInTo)
     order by r.id desc
 """)
     List<AdminReservationListDto> findAdminReservationsByCursor(
             @Param("status") ReservationStatus status,
+            @Param("keyword") String keyword,
             @Param("cursor") Long cursor,
+            @Param("checkInFrom") LocalDateTime checkInFrom,
+            @Param("checkInTo") LocalDateTime checkInTo,
             Pageable pageable   // size만 사용 (PageRequest.of(0, size))
     );
 
