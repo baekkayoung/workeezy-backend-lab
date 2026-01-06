@@ -158,6 +158,31 @@ order by r.id desc
             Pageable pageable
     );
 
+    // 커서 기반 페이지네이션으로 변경
+    @Query("""
+    select new com.together.workeezy.reservation.dto.AdminReservationListDto(
+        r.id,
+        r.reservationNo,
+        p.title,
+        u.userName,
+        r.status,
+        r.createdDate
+    )
+    from Reservation r
+    join r.user u
+    join r.program p
+    where (:status is null or r.status = :status)
+      and (:cursor is null or r.id < :cursor)
+    order by r.id desc
+""")
+    List<AdminReservationListDto> findAdminReservationsByCursor(
+            @Param("status") ReservationStatus status,
+            @Param("cursor") Long cursor,
+            Pageable pageable   // size만 사용 (PageRequest.of(0, size))
+    );
+
+
+
     @Query("""
 select new com.together.workeezy.reservation.dto.AdminReservationDetailDto(
     r.id,

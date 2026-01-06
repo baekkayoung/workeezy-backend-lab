@@ -1,5 +1,6 @@
 package com.together.workeezy.reservation.controller;
 
+import com.together.workeezy.reservation.dto.CursorPageResponse;
 import com.together.workeezy.reservation.enums.ReservationStatus;
 import com.together.workeezy.reservation.dto.AdminReservationDetailDto;
 import com.together.workeezy.reservation.dto.AdminReservationListDto;
@@ -27,6 +28,20 @@ public class AdminReservationController {
     ) {
         return ResponseEntity.ok(
                 adminReservationService.getAdminReservationLists(page, status, keyword)
+        );
+    }
+
+    // 커서 기반 페이지 네이션
+    @GetMapping("/cursor")
+    public CursorPageResponse<AdminReservationListDto> getReservationsByCursor(
+            @RequestParam(required = false) ReservationStatus status,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return adminReservationService.getAdminReservationsByCursor(
+                status,
+                cursor,
+                size
         );
     }
 

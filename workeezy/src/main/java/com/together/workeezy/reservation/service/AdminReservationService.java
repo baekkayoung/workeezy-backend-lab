@@ -1,6 +1,7 @@
 package com.together.workeezy.reservation.service;
 
 import com.together.workeezy.reservation.domain.Reservation;
+import com.together.workeezy.reservation.dto.CursorPageResponse;
 import com.together.workeezy.reservation.enums.ReservationStatus;
 import com.together.workeezy.reservation.dto.AdminReservationDetailDto;
 import com.together.workeezy.reservation.dto.AdminReservationListDto;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +51,33 @@ public class AdminReservationService {
         Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
         return reservationRepository.findAdminReservationListDtos(status, keyword, pageable);
     }
+
+    // 커서 기반 페이지네이션
+    public CursorPageResponse<AdminReservationListDto> getAdminReservationsByCursor(
+            ReservationStatus status,
+            Long cursor,
+            int size
+    ) {
+        List<AdminReservationListDto> results =
+                reservationRepository.findAdminReservationsByCursor(
+                        status,
+                        cursor,
+                        PageRequest.of(0, size+1)
+                );
+
+        boolean hasNext = results.size() > size;
+
+        if (hasNext) {
+            results.remove(size);
+        }
+
+        Long nextCursor = results.isEmpty()
+                ? null
+                : results.get(results.size() - 1).getId();
+
+        return new CursorPageResponse<>(results, nextCursor,hasNext);
+    }
+
 
 //    // 관리자 - 유저 예약 상세 조회
 //    public AdminReservationDetailDto getReservationDetail(Long reservationId) {
