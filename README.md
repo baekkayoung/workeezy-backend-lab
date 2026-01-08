@@ -58,14 +58,14 @@ Workeezy는 Work + Easy의 합성어로, ‘일은 더 쉽게, 성장은 함께(
 - Server : Apache Tomcat 9.0
 - DBMS : MySQL
 - VCS : Git, GitHub, SourceTree
-- Deployment / Environment: Spring Boot 내장 서버 기반, AWS EC2, RDS
+- Deployment / Environment: Spring Boot 내장 서버 기반, AWS EC2, S3, RDS, Docker
 
 <br>
 
 ## 🔧 기술 스택   
 ### Backend   
-- Backend Framework : Spring Boot   
-- Language : Java   
+- Backend Framework : Spring Boot, Flask
+- Language : Java, Python
 - Data Access : JPA   
 - Build Tool : Maven/Gradle
 - Connection Pool : HikariCP (Spring Boot 기본)   
