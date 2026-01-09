@@ -63,21 +63,21 @@ public class AdminReservationService {
             LocalDate checkInTo,
             int size
     ) {
-//        LocalDateTime from = checkInFrom != null
-//                ? checkInFrom.atStartOfDay()
-//                : null;
-//
-//        LocalDateTime to = checkInTo != null
-//                ? checkInTo.atTime(23, 59, 59)
-//                : null;
+        LocalDateTime from = checkInFrom != null
+                ? checkInFrom.atStartOfDay()
+                : null;
+
+        LocalDateTime to = checkInTo != null
+                ? checkInTo.atTime(23, 59, 59)
+                : null;
 
         List<AdminReservationListDto> results =
                 reservationRepository.findAdminReservationsByCursor(
                         status,
                         keyword,
                         cursor,
-                        checkInFrom,
-                        checkInTo,
+                        from,
+                        to,
                         PageRequest.of(0, size+1)
                 );
 
