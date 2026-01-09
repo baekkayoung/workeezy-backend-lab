@@ -117,4 +117,5 @@ ERD: [ERD Cloud]
 <br>
 
 ## 📑 최종 보고서
-[2조 workeezy 최종보고서.pdf]
+![2조 workeezy 최종보고서.pdf](https://github.com/user-attachments/files/24519932/2.Workeezy.pdf)
+
