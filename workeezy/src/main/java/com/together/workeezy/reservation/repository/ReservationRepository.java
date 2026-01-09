@@ -180,8 +180,7 @@ order by r.id desc
            or r.reservationNo like concat('%', :keyword, '%')
       )
       and (:cursor is null or r.id < :cursor)
-      and (:checkInFrom is null or r.startDate >= :checkInFrom)
-      and (:checkInTo   is null or r.startDate <  :checkInTo)
+
     order by r.id desc
 """)
     List<AdminReservationListDto> findAdminReservationsByCursor(
