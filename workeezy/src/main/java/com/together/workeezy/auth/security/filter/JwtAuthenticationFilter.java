@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 3) whitelist 스킵
+        // whitelist 스킵
         if (isWhitelisted(request)) {
             log.info("➡️ [JwtFilter SKIP] whitelisted: {}", uri);
             filterChain.doFilter(request, response);

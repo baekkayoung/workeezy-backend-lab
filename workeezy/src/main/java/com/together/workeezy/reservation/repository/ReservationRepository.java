@@ -188,8 +188,8 @@ order by r.id desc
             @Param("status") ReservationStatus status,
             @Param("keyword") String keyword,
             @Param("cursor") Long cursor,
-            @Param("checkInFrom") LocalDateTime checkInFrom,
-            @Param("checkInTo") LocalDateTime checkInTo,
+            @Param("checkInFrom") LocalDate checkInFrom,
+            @Param("checkInTo") LocalDate checkInTo,
             Pageable pageable   // size만 사용 (PageRequest.of(0, size))
     );
 
