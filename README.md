@@ -37,7 +37,9 @@ Workeezy는 Work + Easy의 합성어로, ‘일은 더 쉽게, 성장은 함께(
 ## 🐵 구성원 및 역할
 
 ### 🙈 조장 김혜지
-
+- Spring Security 인증/인가
+- 결제 흐름
+- GitHub Actions를 통한 CI/CD 파이프라인 구축
 
 
 ### 🙊 조원 백가영
@@ -78,7 +80,9 @@ Workeezy는 Work + Easy의 합성어로, ‘일은 더 쉽게, 성장은 함께(
 <br>
 
 ## 💡 API 연동 & 라이브러리
-
+- Toss payments
+- kakao chatbot
+- SweetAlert2
 
 <br>
 
