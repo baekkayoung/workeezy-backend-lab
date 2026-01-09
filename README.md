@@ -36,46 +36,153 @@ Workeezy는 Work + Easy의 합성어로, ‘일은 더 쉽게, 성장은 함께(
 
 ## 🐵 구성원 및 역할
 
-### 🙈 조장 김혜지
-- Spring Security 인증/인가
-- 결제 흐름
-- GitHub Actions를 통한 CI/CD 파이프라인 구축
+### 👩‍💻 조장 김혜지
 
+🔐 인증 · 사용자 관리
 
-### 🙊 조원 백가영
-
-
-
-
-### 🙉 조원 조민준
-- 워케이션 검색, 추천 기능 설계 및 구현
-- 리뷰 시스템 UI/로직 구현
-- 챗봇기능 개발
+- Spring Security 기반 인증/인가 구조 설계
+- JWT + Redis를 활용한 로그인 / 로그아웃 및 토큰 관리
+   - 로그아웃 시 토큰 무효화(블랙리스트) 처리
+- 아이디 저장 및 자동 로그인 기능 구현
+- 개인정보 수정 시 비밀번호 재검증 로직 적용
+- 연락처 수정 및 비밀번호 변경 기능 구현
 
 <br>
 
-## ⚙ 개발 환경
-- OS : Windows10
-- Developer Tools : IntelliJ IDEA / VS Code / DBeaver
-- Server : Apache Tomcat 9.0
-- DBMS : MySQL
+💳 예약 · 결제 흐름
+
+- 결제 완료 시 예약 상태 변경 처리 흐름 구현
+- 결제 도메인과 예약 도메인 간 상태 동기화 로직 설계
+
+<br>
+
+🚀 배포 · 운영
+
+- Docker 기반 애플리케이션 컨테이너화
+- GitHub Actions를 활용한 CI/CD 파이프라인 구축
+- 쉘 스크립트를 통한 자동 배포 환경 구성
+
+<br>
+
+### 👩‍💻 조원 백가영
+
+🔁 예약 흐름 관리
+
+- 예약 변경, 취소 기능 구현
+- 반려 사유 확인 후 재신청 가능한 예약 흐름 설계
+- 예약 상태에 따른 분기 처리 로직 구현
+
+<br>
+
+🔒 예약 동시성 제어
+
+- 비관적 락(Pessimistic Lock)을 활용한 예약 동시성 제어
+- 중복 예약 방지 및 데이터 정합성 문제 해결
+
+<br>
+
+🗂 사용자 데이터 관리
+
+- Redis를 활용한 사용자별 임시 저장 데이터 관리
+- 예약 진행 중 이탈 시 데이터 유지 및 복구 처리
+
+<br>
+
+📜 조회 · 페이징
+
+- 무한 스크롤 방식의 사용자별 예약 조회 기능 구현
+- Cursor 기반 Pagination을 적용한 관리자 예약 조회 기능 구현
+
+<br>
+
+📑 문서 생성 · 파일 관리
+
+- 예약 확정 시 PDF 문서 자동 생성(OpenPDF)
+- 생성된 PDF 파일을 AWS S3에 업로드 및 관리
+
+<br>
+
+### 👨‍💻 조원 조민준
+
+🔍 프로그램 조회 · 검색
+
+- 프로그램 상세 페이지 및 검색 결과 페이지 구현
+- 조건 기반 검색 기능 구현
+- 검색어 기반 추천 프로그램 노출 로직 적용
+
+<br>
+
+📝 리뷰
+
+- 사용자 리뷰 등록 UI 및 비즈니스 로직 구현
+- 리뷰 데이터 저장 및 조회 흐름 설계
+
+<br>
+
+💬 챗봇
+
+- 카카오톡 API 연동 챗봇 기능 구현
+- 사용자 질의에 따른 응답 처리 로직 구성
+- Docker 기반 Flask 챗봇 서버 구축
+- 메인 백엔드와 분리된 마이크로 서비스 형태로 운영
+
+<br>
+
+## ⚙ 개발 환경 (Environment / Tools)
+
+- OS : Windows 10
+- Developer Tools : IntelliJ IDEA, WebStorm, VS Code, DBeaver
+- Test Tools : Postman, Apache JMeter
 - VCS : Git, GitHub, SourceTree
-- Deployment / Environment: Spring Boot 내장 서버 기반, AWS EC2, S3, RDS, Docker
 
 <br>
 
-## 🔧 기술 스택   
-### Backend   
-- Backend Framework : Spring Boot, Flask
+## 🔧 기술 스택
+
+### Backend
+
+- Framework : Spring Boot, Flask
 - Language : Java, Python
-- Data Access : JPA   
-- Build Tool : Maven/Gradle
-- Connection Pool : HikariCP (Spring Boot 기본)   
+- Security : Spring Security, JWT (Access / Refresh Token)
+- Data Access : JPA (Hibernate)
+- Cache / Session Store : Redis
+- Build Tool : Maven, Gradle
+- Connection Pool : HikariCP
+- API Architecture : RESTful API
+- Transaction Management : Spring @Transactional  
    
 ### Frontend
-- Frontend Template Engine : React  
-- Markup & Styling : HTML5, CSS3, Node.js
-- Scripting : JavaScript, jQuery   
+
+- Framework : React
+- Markup & Styling : HTML5, CSS3
+- Runtime / Package Manager : Node.js
+- Scripting : JavaScript (ES6+)
+- HTTP Client : Axios
+
+<br>
+
+## 🗄 Database
+
+- DBMS : MySQL
+- Concurrency Control : Pessimistic Lock (JPA)
+- Pagination : Cursor-based Pagination
+
+<br>
+
+## 🚀 Server / Deployment
+- Server : Apache Tomcat 9.0, Spring Boot Embedded Server
+- Deployment / Environment :
+   - AWS EC2, S3, RDS
+   - Docker
+   - GitHub Actions (CI/CD)
+   - Environment Separation (local / prod)
+
+<br>
+
+## 📄 Document / File Handling
+
+- PDF Generation : OpenPDF
+- File Storage : AWS S3
 
 <br>
 
@@ -85,6 +192,7 @@ Workeezy는 Work + Easy의 합성어로, ‘일은 더 쉽게, 성장은 함께(
 - SweetAlert2
 
 <br>
+
 
 ## 도메인 설계
 
